@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NovaTasks</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:'Inter',sans-serif;
+    }
+
+    body{
+      min-height:100vh;
+      background:
+      radial-gradient(circle at top left,#2563eb22,transparent 30%),
+      radial-gradient(circle at bottom right,#7c3aed22,transparent 30%),
+      #0f172a;
+
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      padding:40px;
+      color:white;
+    }
+
+    .app{
+      width:100%;
+      max-width:560px;
+      background:rgba(15,23,42,0.75);
+      border:1px solid rgba(255,255,255,0.08);
+      backdrop-filter:blur(18px);
+      border-radius:28px;
+      padding:30px;
+    }
+
+    .header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:30px;
+    }
+
+    .logo{
+      display:flex;
+      align-items:center;
+      gap:14px;
+    }
+
+    .logo-icon{
+      width:50px;
+      height:50px;
+      border-radius:16px;
+      background:linear-gradient(135deg,#3b82f6,#7c3aed);
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      font-size:22px;
+      font-weight:700;
+    }
+
+    .date-box{
+      text-align:right;
+    }
+
+    .stats{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:15px;
+      margin-bottom:25px;
+    }
+
+    .card{
+      background:rgba(255,255,255,0.04);
+      padding:15px;
+      border-radius:16px;
+      text-align:center;
+    }
+
+    .input-area{
+      display:flex;
+      gap:10px;
+      margin-bottom:25px;
+    }
+
+    .input-area input{
+      flex:1;
+      padding:15px;
+      border-radius:14px;
+      border:none;
+      outline:none;
+      background:rgba(255,255,255,0.05);
+      color:white;
+    }
+
+    .input-area button{
+      padding:15px 20px;
+      border:none;
+      border-radius:14px;
+      background:linear-gradient(135deg,#3b82f6,#7c3aed);
+      color:white;
+      cursor:pointer;
+    }
+
+    .tasks{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+
+    .task{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:15px;
+      border-radius:16px;
+      background:rgba(255,255,255,0.04);
+    }
+
+    .left{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+
+    .completed{
+      text-decoration:line-through;
+      opacity:0.5;
+    }
+
+    .delete{
+      background:#ef4444;
+      border:none;
+      color:white;
+      padding:8px 12px;
+      border-radius:10px;
+      cursor:pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <!-- HEADER -->
+  <div class="header">
+
+    <div class="logo">
+      <div class="logo-icon">S</div>
+      <div>
+        <h2>Daily Tasks</h2>
+        <p>Organize your productivity</p>
+      </div>
+    </div>
+
+    <div class="date-box">
+      <h4 id="day"></h4>
+      <p id="fullDate"></p>
+    </div>
+
+  </div>
+
+  <!-- STATS -->
+  <div class="stats">
+
+    <div class="card">
+      <p>Total</p>
+      <h2>{{ total }}</h2>
+    </div>
+
+    <div class="card">
+      <p>Completed</p>
+      <h2>{{ completed }}</h2>
+    </div>
+
+    <div class="card">
+      <p>Pending</p>
+      <h2>{{ pending }}</h2>
+    </div>
+
+  </div>
+
+  <!-- ADD TASK -->
+  <form class="input-area" method="POST" action="/add">
+    <input type="text" name="content" placeholder="Create new task..." required>
+    <button type="submit">Add</button>
+  </form>
+
+  <!-- TASK LIST -->
+  <div class="tasks">
+
+    {% for task in tasks %}
+
+    <div class="task">
+
+      <div class="left">
+
+        <input type="checkbox"
+               onchange="window.location.href='/complete/{{ task.id }}'"
+               {% if task.completed %}checked{% endif %}>
+
+        <span class="{% if task.completed %}completed{% endif %}">
+          {{ task.content }}
+        </span>
+
+      </div>
+
+      <a href="/delete/{{ task.id }}">
+        <button class="delete">✕</button>
+      </a>
+
+    </div>
+
+    {% endfor %}
+
+  </div>
+
+</div>
+
+<script>
+  const now = new Date();
+
+  document.getElementById("day").innerText =
+    now.toLocaleDateString("en-US", { weekday: "long" });
+
+  document.getElementById("fullDate").innerText =
+    now.toLocaleDateString("en-US", {
+      day: "numeric",
+      month: "long",
+      year: "numeric"
+    });
+</script>
+
+</body>
+</html>
